@@ -22,7 +22,11 @@ module RubyMotionQuery
 
         # convert the callback
         handler = lambda do |action|
-          alert_action.handler.call(alert_action.tag) unless alert_action.handler.nil?
+          if !@opts[:textfields] && !alert_action.handler.nil?
+            alert_action.handler.call(alert_action.tag)
+          elsif @opts[:textfields] && !alert_action.handler.nil?
+            alert_action.handler.call(alert_action.tag, @alert_controller.textFields.map {|t| t.text})
+          end
         end if alert_action.handler
 
         # create teh action
@@ -30,6 +34,16 @@ module RubyMotionQuery
 
         # add it to the UIAlertController
         @alert_controller.addAction action
+      end
+
+      textfields = @opts[:textfields]
+      if(textfields)
+        textfields.each do |t|
+          @alert_controller.addTextFieldWithConfigurationHandler -> (textField) {
+            textField.placeholder = t[:placeholder] || "Enter some text"
+            textField.secureTextEntry = t[:secure] || false
+          }
+        end
       end
 
       self

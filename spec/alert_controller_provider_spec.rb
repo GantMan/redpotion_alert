@@ -18,6 +18,17 @@ describe "RubyMotionQuery" do
       Proc.new { @p.build([]) }.should.raise(ArgumentError)
     end
 
+    describe "alert controller with 1 text field" do
+
+      before do
+        @p.build [@ok], title: "hi", style: :alert, textfields: [placeholder: "hi"]
+      end
+
+      it "should have one text field" do
+        @p.alert_controller.textFields.size.should == 1
+      end
+    end
+
     describe "alert controller with ok button" do
 
       before do

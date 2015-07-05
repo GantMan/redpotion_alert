@@ -45,6 +45,12 @@ describe 'RedAlert' do
       @provider.alert_controller.message.should == "hello"
     end
 
+    # it "gets the text back if a textfield is sent..." do
+    #   rmq.app.alert(message: "hello", textfields: [placeholder: "insert text"]) do |action, text|
+    # ???
+    #   end
+    # end
+
   end
 
   describe "UIActionSheet Hosted" do
