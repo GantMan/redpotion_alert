@@ -26,6 +26,24 @@ module RubyMotionQuery
       # mark where our special buttons are
       @alert_view.cancelButtonIndex = @actions_in_display_order.length-1 if cancel_action
 
+      # add text field if any
+      textfields = @opts[:textfields]
+      if(textfields)
+        textfield_style = case @opts[:textfield_style]
+        when :secure
+          UIAlertViewStyleSecureTextInput
+        when :login
+          UIAlertViewStyleLoginAndPasswordInput
+        else
+          UIAlertViewStylePlainTextInput
+        end
+        @alert_view.alertViewStyle = textfield_style
+        textfields.each_with_index do |t, i|
+          @alert_view.textFieldAtIndex(i).placeholder = t[:placeholder] if t[:placeholder]
+        end
+      end
+
+
       self
     end
 
@@ -41,7 +59,18 @@ module RubyMotionQuery
     def alertView(alertView, didDismissWithButtonIndex:buttonIndex)
       @view_controller.dismissViewControllerAnimated @opts[:animated], completion: nil
       action = @actions_in_display_order[buttonIndex]
-      action.handler.call(action.tag) if action.handler
+      textfields = @opts[:textfields]
+      if action.handler && !textfields
+        action.handler.call(action.tag)
+      elsif action.handler && textfields
+        textfields_text_array = case @opts[:textfield_style]
+        when :login
+          [alertView.textFieldAtIndex(0).text, alertView.textFieldAtIndex(1).text]
+        else
+          alertView.textFieldAtIndex(0).text
+        end
+        action.handler.call(action.tag, textfields_text_array)
+      end
       @view_controller = nil # forget the reference
     end
 

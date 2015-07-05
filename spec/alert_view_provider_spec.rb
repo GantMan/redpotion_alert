@@ -1,6 +1,5 @@
 describe "RubyMotionQuery" do
   describe "AlertViewProvider" do
-
     before do
       @p      = RubyMotionQuery::AlertViewProvider.new
       @ok     = RubyMotionQuery::AlertAction.new(title: "OK", tag: :ok, style: :default)
@@ -14,6 +13,30 @@ describe "RubyMotionQuery" do
 
     it "should prevent empty actions" do
       Proc.new { @p.build([]) }.should.raise(ArgumentError)
+    end
+
+    describe "alert view with one text field" do
+
+      before do
+        @p.build [@ok], title: "hi", style: :alert, textfields: [placeholder: "hi"]
+      end
+
+      it "should have one text field" do
+        @p.alert_view.textFieldAtIndex(0).should != nil
+      end
+
+    end
+
+    describe "alert view with two text field" do
+
+      before do
+        @p.build [@ok], title: "hi", style: :alert, textfields: [placeholder: "hi"]
+      end
+
+      it "should have one text field" do
+        @p.alert_view.textFieldAtIndex(0).should != nil
+      end
+
     end
 
     describe "alert view with ok button" do
